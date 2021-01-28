@@ -1,16 +1,16 @@
 # list of students in array
 students = [
 {name: "Dr. Hannibal Lecter", cohort: :november},
-{name: "Darth Vader", cohort: :november},
+{name: "Darth Vader", cohort: :june},
 {name: "Nurse Ratched", cohort: :november},
 {name: "Michael Corleone", cohort: :november},
-{name: "Alex DeLarge", cohort: :november},
+{name: "Alex DeLarge", cohort: :june},
 {name: "The Wicked Witch of the West", cohort: :november},
 {name: "Terminator", cohort: :november},
 {name: "Freddy Krueger", cohort: :november},
 {name: "The Joker", cohort: :november},
-# {name: "Joffrey Baratheon", cohort: :november},
-{name: "Norman Bates", cohort: :november}
+{name: "Joffrey Baratheon", cohort: :november},
+{name: "Norman Bates", cohort: :may}
 ]
 
 MONTHS = [
@@ -59,34 +59,51 @@ def print_header
   puts "-------------"
 end
 
-def print_students(students, number: 'n', letter: '', max_length: 1e9)
+def print_students(students, number: 'n', letter: '', max_length: 1e9, by_cohort: 'n')
     maxlen = 0
     students.each do |s|
       if s[:name].length > maxlen
         maxlen = s[:name].length
       end
     end
-
+    cohort = {}
     students.each_with_index do |student, i|
       prefix = ""
       if number == 'y'
         prefix = "#{i+1}. ".rjust(4)
       end
       if student[:name].length <= max_length && (letter == "" || student[:name][0] == letter)
-        puts "#{prefix}#{student[:name].ljust(maxlen)} (#{student[:cohort]} cohort)"
+        line = "#{prefix}#{student[:name].ljust(maxlen)}"
+        if by_cohort == 'y'
+          if !cohort.keys.include?(student[:cohort])
+            cohort[student[:cohort]] = []
+          end
+          cohort[student[:cohort]].push(line)
+        else
+          puts line + " (#{student[:cohort]} cohort)"
+        end
+      end
+    end
+    if cohort != {}
+      MONTHS.each do |month|
+        if cohort.keys.include?(month)
+          puts "#{month.to_s.capitalize} Cohort:"
+          puts cohort[month].join("\n")
+        end
       end
     end
 end
 
 def print_footer(names)
-  print "-------------\nOverall, we have #{names.count} great students"
+  print "-------------\nOverall, we have #{names.count} great student#{("s"*(names.count - 1))[0]}"
 end
 
 # call methods
-# students = input_students
+students = input_students
 if students.length != 0
   print_header
-  print_students(students, number:'y')
+  # print_students(students, number: 'y', letter: '', max_length: 12, by_cohort: 'y')
+  print_students(students)
   print_footer(students)
 else
   puts "No students are enrolled"
