@@ -59,7 +59,7 @@ def print_header
   puts "-------------"
 end
 
-def print_students(number: 'n', letter: '', max_length: 1e9, by_cohort: 'n')
+def print_students_list(number: 'n', letter: '', max_length: 1e9, by_cohort: 'n')
     maxlen = 0
     @students.each do |s|
       if s[:name].length > maxlen
@@ -103,6 +103,7 @@ def print_menu
   puts "Select an option from the list below"
   puts "1. Input Students"
   puts "2. Show Students"
+  puts "3. Save the list to students.csv"
   puts "9. Exit"
 end
 
@@ -110,11 +111,21 @@ def show_students
   if @students.length != 0
     print_header
     # print_students(students, number: 'y', letter: '', max_length: 12, by_cohort: 'y')
-    print_students
+    print_students_list
     print_footer
   else
     puts "No students are enrolled"
   end
+end
+
+def save_students
+  # Open file
+  file = File.open("students.csv","w")
+  # Iterate over students
+  @students.each do |student|
+    file.puts [student[:name],student[:cohort]].join(",")
+  end
+  file.close
 end
 
 def process(selection)
@@ -124,6 +135,8 @@ def process(selection)
     input_students
   when "2"
     show_students
+  when "3"
+    save_students
   when "9"
     exit
   else
