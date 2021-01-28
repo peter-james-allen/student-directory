@@ -13,6 +13,8 @@ students = [
 {name: "Norman Bates", cohort: :may}
 ]
 
+@students  = []
+
 MONTHS = [
     :january,
     :february,
@@ -34,7 +36,6 @@ def input_students
   puts "To finish, just hit return twice"
   puts "\nEnter Name:"
   # create empty array
-  students = []
   name = gets.chomp
   month = ''
   # while name isn't empty, repeat
@@ -44,13 +45,12 @@ def input_students
        month = gets.chomp.to_sym
      end
     #add student to array
-    students << {name: name, cohort: month}
-    puts "Now we have #{students.count} students\n\n"
+    @students << {name: name, cohort: month}
+    puts "Now we have #{@students.count} students\n\n"
     puts "Enter another Name:"
     name = gets.chomp
     month = ''
   end
-  students
 end
 
 # define print methods
@@ -59,15 +59,15 @@ def print_header
   puts "-------------"
 end
 
-def print_students(students, number: 'n', letter: '', max_length: 1e9, by_cohort: 'n')
+def print_students(number: 'n', letter: '', max_length: 1e9, by_cohort: 'n')
     maxlen = 0
-    students.each do |s|
+    @students.each do |s|
       if s[:name].length > maxlen
         maxlen = s[:name].length
       end
     end
     cohort = {}
-    students.each_with_index do |student, i|
+    @students.each_with_index do |student, i|
       prefix = ""
       if number == 'y'
         prefix = "#{i+1}. ".rjust(4)
@@ -94,39 +94,49 @@ def print_students(students, number: 'n', letter: '', max_length: 1e9, by_cohort
     end
 end
 
-def print_footer(names)
-  print "-------------\nOverall, we have #{names.count} great student#{("s"*(names.count - 1))[0]}"
+def print_footer
+  print "-------------\nOverall, we have #{@students.count} great student#{("s"*(@students.count - 1))[0]}"
+end
+
+def print_menu
+  # Print menu and ask user for input
+  puts "Select an option from the list below"
+  puts "1. Input Students"
+  puts "2. Show Students"
+  puts "9. Exit"
+end
+
+def show_students
+  if @students.length != 0
+    print_header
+    # print_students(students, number: 'y', letter: '', max_length: 12, by_cohort: 'y')
+    print_students
+    print_footer
+  else
+    puts "No students are enrolled"
+  end
+end
+
+def process(selection)
+  # Do what has been selected
+  case selection
+  when "1"
+    input_students
+  when "2"
+    show_students
+  when "9"
+    exit
+  else
+    puts "Try Again."
+  end
 end
 
 # adding menu
 def interactive_menu
-  students  = []
   loop do
-    # Print menu and ask user for input
-    puts "Select an option from the list below"
-    puts "1. Input Students"
-    puts "2. Show Students"
-    puts "9. Exit"
-    # Read and store input
-    selection = gets.chomp
-    # Do what has been selected
-    case selection
-    when "1"
-      students = input_students
-    when "2"
-      if students.length != 0
-        print_header
-        # print_students(students, number: 'y', letter: '', max_length: 12, by_cohort: 'y')
-        print_students(students)
-        print_footer(students)
-      else
-        puts "No students are enrolled"
-      end
-    when "9"
-      exit
-    else
-      puts "Try Again."
-    end
+    print_menu
+    # Read and pass input to process
+    process(gets.chomp)
   end
 end
 
