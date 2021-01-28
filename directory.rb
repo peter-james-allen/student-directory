@@ -98,13 +98,36 @@ def print_footer(names)
   print "-------------\nOverall, we have #{names.count} great student#{("s"*(names.count - 1))[0]}"
 end
 
-# call methods
-students = input_students
-if students.length != 0
-  print_header
-  # print_students(students, number: 'y', letter: '', max_length: 12, by_cohort: 'y')
-  print_students(students)
-  print_footer(students)
-else
-  puts "No students are enrolled"
+# adding menu
+def interactive_menu
+  students  = []
+  loop do
+    # Print menu and ask user for input
+    puts "Select an option from the list below"
+    puts "1. Input Students"
+    puts "2. Show Students"
+    puts "9. Exit"
+    # Read and store input
+    selection = gets.chomp
+    # Do what has been selected
+    case selection
+    when "1"
+      students = input_students
+    when "2"
+      if students.length != 0
+        print_header
+        # print_students(students, number: 'y', letter: '', max_length: 12, by_cohort: 'y')
+        print_students(students)
+        print_footer(students)
+      else
+        puts "No students are enrolled"
+      end
+    when "9"
+      exit
+    else
+      puts "Try Again."
+    end
+  end
 end
+
+interactive_menu
