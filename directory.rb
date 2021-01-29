@@ -36,19 +36,19 @@ def input_students
   puts "To finish, just hit return twice"
   puts "\nEnter Name:"
   # create empty array
-  name = gets.chomp
+  name = STDIN.gets.chomp
   month = ''
   # while name isn't empty, repeat
   while !name.empty? do
      while !MONTHS.include?(month)
        puts "Enter cohort month:"
-       month = gets.chomp.to_sym
+       month = STDIN.gets.chomp.to_sym
      end
     #add student to array
     @students << {name: name, cohort: month}
     puts "Now we have #{@students.count} students\n\n"
     puts "Enter another Name:"
-    name = gets.chomp
+    name = STDIN.gets.chomp
     month = ''
   end
 end
@@ -103,8 +103,8 @@ def print_menu
   puts "Select an option from the list below"
   puts "1. Input Students"
   puts "2. Show Students"
-  puts "3. Save the list to students.csv"
-  puts "4. Load the list from students.csv"
+  puts "3. Save the list of students to students.csv"
+  puts "4. Load the list of students from #{ARGV[0]}"
   puts "9. Exit"
 end
 
@@ -119,13 +119,26 @@ def show_students
   end
 end
 
-def load_students
-  file = File.open("students.csv","r")
+def load_students(filename = "students.csv")
+  file = File.open(filename,"r")
   file.readlines.each do |line|
     name,cohort = line.chomp.split(",")
     @students << {name: name, cohort: cohort.to_sym}
   end
   file.close
+  puts "Loaded #{@students.count} students from #{filename}"
+end
+
+def try_load_students
+  filename = ARGV[0]
+  if filename.nil?
+    load_students
+  elsif File.exists?(filename)
+    load_students(filename)
+  else
+    puts "Sorry, #{filename} dosen't exist."
+    exit
+  end
 end
 
 def save_students
@@ -148,7 +161,7 @@ def process(selection)
   when "3"
     save_students
   when "4"
-    load_students
+    try_load_students
   when "9"
     exit
   else
@@ -161,7 +174,7 @@ def interactive_menu
   loop do
     print_menu
     # Read and pass input to process
-    process(gets.chomp)
+    process(STDIN.gets.chomp)
   end
 end
 
